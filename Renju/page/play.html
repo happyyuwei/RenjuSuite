@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>开始游戏</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./pack/standstone.bootstrap.min.css">
+        <script src="./pack/jquery.min.js"></script>
+        <script src="./pack/bootstrap.min.js"></script>
+        <script type="text/javascript" src="play.js"></script>
+        <style>
+            /*棋盘样式*/
+            canvas {
+                display: block;
+                margin: 50px auto;
+                box-shadow: -2px -2px 2px #EFEFEF, 5px 5px 5px #B9B9B9;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <canvas id="board" width="450" height="450" ></canvas>
+        </div>
+        <script>
+            //完成渲染立即执行
+            (function () {
+                //创建实例
+                var game_instance = new Game();
+            })();
+        </script>
+    </body>
+</html>

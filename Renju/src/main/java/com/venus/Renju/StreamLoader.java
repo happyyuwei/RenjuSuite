@@ -13,36 +13,36 @@ import java.util.*;
  * @author happy
  */
 public class StreamLoader {
-    
-    
+
     /**
-     * 
+     *
      * @param dir
      * @param split
-     * @return 
+     * @return
      */
-    public static Map<String,String> readMap(String dir,String split){
-        String[] lines=StreamLoader.readLines(dir);
-        Map<String,String> map=new HashMap<>();
-        for(int i=0;i<lines.length;i++){
-            String[] line=lines[i].split(split);
-            if(line.length>=2){
+    public static Map<String, String> readMap(String dir, String split) {
+        String[] lines = StreamLoader.readLines(dir);
+        Map<String, String> map = new HashMap<>();
+        for (int i = 0; i < lines.length; i++) {
+            String[] line = lines[i].split(split);
+            if (line.length >= 2) {
                 map.put(line[0].trim(), line[1].trim());
             }
         }
         return map;
     }
-    
+
     /**
      * readline by file path
+     *
      * @param dir
-     * @return 
+     * @return
      */
-    public static String[] readLines(String dir){
-        try{
-            BufferedReader in=new BufferedReader(new InputStreamReader(new FileInputStream(dir)));
+    public static String[] readLines(String dir) {
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(dir)));
             return StreamLoader.readLines(in);
-        }catch(IOException exc){
+        } catch (IOException exc) {
             exc.printStackTrace();
             return null;
         }
@@ -71,33 +71,52 @@ public class StreamLoader {
             return null;
         }
     }
-    
+
     /**
      * write string to a file
+     *
      * @param str
-     * @param file 
+     * @param file
      */
-    public static void write(String str, String file){
-        try{
-             PrintStream out=new PrintStream(file);
-             out.print(str);
-             out.close();
-         }catch(IOException exc){
-             exc.printStackTrace();
-         }
+    public static void write(String str, String file) {
+        try {
+            PrintStream out = new PrintStream(file);
+            out.print(str);
+            out.close();
+        } catch (IOException exc) {
+            exc.printStackTrace();
+        }
     }
-    
+
     /**
-     * 
+     *
      * @param byte_file
-     * @param file_name 
-     * @throws java.lang.Exception 
+     * @param file_name
+     * @throws java.lang.Exception
      */
-    public static void writeBytes(byte[] byte_file, String file_name) throws Exception{
-        BufferedOutputStream out=new BufferedOutputStream(new FileOutputStream(file_name));
+    public static void writeBytes(byte[] byte_file, String file_name) throws Exception {
+        BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file_name));
         out.write(byte_file);
         out.flush();
         out.close();
+    }
+
+    /**
+     * 
+     * @param map
+     * @param split
+     * @param file_name 
+     */
+    public static void writeMap(Map<String,String> map,String split,String file_name) {
+        try{
+        PrintStream out=new PrintStream(file_name);
+        for(Map.Entry<String,String> e:map.entrySet()){
+            out.println(String.valueOf(e.getKey())+split+String.valueOf(e.getValue()));
+        }
+        out.close();
+        }catch(IOException exc){
+            exc.printStackTrace();
+        }
     }
 
 }

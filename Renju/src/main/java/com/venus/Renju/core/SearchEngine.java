@@ -49,6 +49,7 @@ public class SearchEngine {
             this.mine_id = referee.getBlack_id();
             this.oppoiste_id = referee.getWhite_id();
         } else {
+            //oppoiste
             this.mine_id = referee.getWhite_id();
             this.oppoiste_id = referee.getBlack_id();
         }

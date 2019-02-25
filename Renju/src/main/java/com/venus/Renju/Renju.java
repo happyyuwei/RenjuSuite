@@ -29,9 +29,9 @@ public class Renju {
 
        // AnalysisWindow a=new AnalysisWindow(AnalysisWindow.MODE_AI);
         //a.init();
-        MenuWindow menu_window=new MenuWindow();
-//WebGame game=new WebGame();
-//game.start(args);
+//        MenuWindow menu_window=new MenuWindow();
+WebGame game=new WebGame();
+game.start(args);
         
 //
 

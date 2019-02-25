@@ -5,10 +5,11 @@
  */
 package com.venus.Renju.web;
 
+import com.venus.Renju.StreamLoader;
 import org.springframework.web.bind.annotation.*;
 import com.venus.Renju.core.*;
 import java.awt.Point;
-
+import java.util.*;
 /**
  *
  * @author happy
@@ -62,6 +63,7 @@ public class GameController {
             }
         } else if (request.getCode() == MessageBean.CODE_PLAYER_DONE) {
             LogCat.log(GameController.class, "game going, session_id="+request.getId());
+             LogCat.log(GameController.class, "player turn:"+new Point(request.getRow(),request.getCol()));
             try {
                 //player 走棋完成，轮到ai走棋
                 Point ai_point = map.turn(request.getId(), false, request.getRow(), request.getCol());
@@ -73,6 +75,8 @@ public class GameController {
                 }
             } catch (PlayMap.PlayerWinException exc) {
                 LogCat.log(GameController.class, "Player win.");
+                this.saveScore(request.getName(), 1);
+                LogCat.log(GameController.class, "player "+request.getName()+" +1");
                 //玩家胜出
                 return MessageBean.createBean(request.getId(), MessageBean.CODE_PLAYER_WIN, request.getName(), 0, 0);
             } catch (PlayMap.AiWinException exc) {
@@ -80,6 +84,8 @@ public class GameController {
                 LogCat.log(GameController.class, "AI turn: "+win_point);
                 //ai胜出
                 LogCat.log(GameController.class, "AI win.");
+                 this.saveScore(request.getName(), -1);
+                LogCat.log(GameController.class, "player "+request.getName()+" -1");
                 return MessageBean.createBean(request.getId(), MessageBean.CODE_AI_WIN, request.getName(), win_point.x, win_point.y);
             }
         } else {
@@ -95,6 +101,22 @@ public class GameController {
      */
     private boolean aiFirst() {
         return Math.random() >= 0.5;
+    }
+    
+    /**
+     * 
+     * @param user
+     * @param score 
+     */
+    private void saveScore(String user, int score){
+        Map<String,String> map=StreamLoader.readMap(".\\data\\rank.txt", ",");
+        String score_sum=map.get(user);
+        if(score_sum==null){
+            map.put(user, String.valueOf(score));
+        }else{
+            map.replace(user, score_sum, String.valueOf(Integer.parseInt(score_sum)+score));
+        }
+        StreamLoader.writeMap(map, ",", ".\\data\\rank.txt");
     }
 
 }

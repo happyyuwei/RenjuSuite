@@ -56,8 +56,7 @@ public class PlayMap {
         //set backup
         referee.setBackup(true);
         //create engine
-//        SearchEngine engine = new SearchEngine(ai_point,2, referee, new SimpleValueModel());
-        SearchEngine engine = new SearchEngine(Referee.BLACK_PLAYER, 2, referee, new SimpleValueModel());
+        SearchEngine engine = new SearchEngine(ai_point, 2, referee, new SimpleValueModel());
         //register
         this.map.put(id, engine);
         return id;
@@ -86,20 +85,25 @@ public class PlayMap {
         //如果第一轮ai先走，则玩家先不走
         if (ai_only == false) {
             //player turn
-            int player_max_num = referee.turn(new Point(row, col), referee.getBlack_id());
+//            int player_max_num = referee.turn(new Point(row, col), referee.getBlack_id());
+            int player_max_num = referee.turn(new Point(row, col), engine.getMine_id());
             //judge win
             if (player_max_num >= 5) {
+                //if the game is over, remove the session
                 this.map.remove(session_id);
+                LogCat.log(PlayMap.class, "session removed, id="+session_id);
                 //player win
                 throw new PlayerWinException();
             }
         }
         //ai turn
         Point ai_next = engine.search();
-        int ai_max_num = referee.turn(ai_next, referee.getWhite_id());
+//        int ai_max_num = referee.turn(ai_next, referee.getWhite_id());
+        int ai_max_num = referee.turn(ai_next, engine.getOppoiste_id());
         //judge win
         if (ai_max_num >= 5) {
             this.map.remove(session_id);
+             LogCat.log(PlayMap.class, "session removed, id="+session_id);
             throw new AiWinException(ai_next);
         }
         return ai_next;
