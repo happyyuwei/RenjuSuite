@@ -5,8 +5,8 @@
  */
 //
 //var url = "http://180.174.81.173:3389";
-var url = "http://localhost:3389";
-//var url = "";
+//var url = "http://localhost:3389";
+var url = "";
 var play_api = "/renju/play";
 var rank_api = "/renju/rank";
 
@@ -59,13 +59,17 @@ function updateRank() {
         //rank list
         var rank_list = response;
         //for each
+        var rank=0;
         for (var i in rank_list) {
+            //get user
             var user = rank_list[i];
+            //rank
+            rank=Number(rank)+Number(1);
             //create line
             var line = document.createElement("tr");
             //rank col
             var rank_col = document.createElement("td");
-            rank_col.innerHTML = i;
+            rank_col.innerHTML = rank;
             //name col
             var name_col = document.createElement("td");
             name_col.innerHTML = user.name;
@@ -79,9 +83,8 @@ function updateRank() {
             //rank table
             rank_table.appendChild(line);
         }
-    });
+    }); 
 }
-
 /**
  * 
  * @param {type} user_name
@@ -122,9 +125,46 @@ var Game = function (user_name) {
     var info_panel = document.getElementById("info-panel");
     //通知图组件
     var info_img = document.getElementById("info-img");
-
+    
+    /**
+     * 响应式开发，对于不同屏幕的设备返回不同的棋盘
+     * @returns {Number|screen.availWidth}
+     */
+    function initCanvas(){
+        var screen_width=screen.availWidth;
+        //宽度大于600的屏幕
+        if(screen_width>600){
+            return 600;
+            //宽度小于600的屏幕
+        }else{
+            return screen_width;
+        }
+    }
+    
+    /**
+     * 响应式开发，根据屏幕大小返回不同类型的背景图片
+     * @returns {Number|screen.availWidth}
+     */
+    function initCanvasBackground(){
+        var screen_width=screen.availWidth;
+        var img_dir="./drawable/";
+        if(screen_width>1600){
+            return img_dir+"background_xl.png";
+        }
+        //宽度大于600的屏幕
+        else if(screen_width>800 && screen_width<=1600){
+            return img_dir+"background_l.png";
+            //宽度小于600的屏幕
+        }else if(screen_width>400 && screen_width<=800){
+            return img_dir+"background_m.png";
+        }else{
+            return img_dir+"background_s.png";
+        }
+    }
+    //背景图
+    var board_background=initCanvasBackground();
     //定义宽度与高度
-    var board_width = 600;
+    var board_width = initCanvas();
     //格子宽度
     var grid_width = board_width / 16;
     //棋子宽度
@@ -200,7 +240,7 @@ var Game = function (user_name) {
                 ai = player_white;
                 alert("玩家先走");
                 //图标
-                info_img.src = "ai_white.png";
+                info_img.src = "./drawable/ai_white.png";
                 //通知面板
                 info_panel.innerHTML = "玩家走棋.";
             }
@@ -209,7 +249,7 @@ var Game = function (user_name) {
                 player = player_white;
                 ai = player_black;
                 //图标
-                info_img.src = "ai_black.png";
+                info_img.src = "./drawable/ai_black.png";
                 alert("AI先走");
                 //通知面板
                 info_panel.innerHTML = "AI走棋.";
@@ -234,7 +274,7 @@ var Game = function (user_name) {
         //创建背景图像实例
         var img = new Image();
         //加载图像
-        img.src = "background.png";
+        img.src = board_background;
         //图像加载完后，将图像绘制在画布上
         img.onload = function () {
             //把背景画在画布上
@@ -336,7 +376,7 @@ var Game = function (user_name) {
                             updateRank();
                              //set visible
                             var rank_panel = document.getElementById("rank-panel");
-                            rank_panel.style = "margin:auto 200px auto 200px;display:block";
+                            rank_panel.style = "display:block";
                         }
                     });
                 } else {

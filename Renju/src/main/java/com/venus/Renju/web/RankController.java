@@ -45,10 +45,15 @@ public class RankController {
             //add to list
             rank_list.add(score);
         }
+        //rank
+        Collections.sort(rank_list, (RankController.UserScore u1, RankController.UserScore u2) -> u2.getScore()-u1.getScore());
         //sort
         return rank_list;
     }
     
+    /**
+     * record.
+     */
     public static class UserScore{
         private String name;
         private int score;

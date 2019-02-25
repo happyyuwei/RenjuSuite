@@ -18,7 +18,18 @@ public class CmdAIGame {
     final private Referee referee;
 
     final private SearchEngine search_engine;
+    
+    /**
+     * 
+     */
+    public CmdAIGame(){
+        this(15);
+    }
 
+    /**
+     * 
+     * @param border_width 
+     */
     public CmdAIGame(int border_width) {
         this.referee = new Referee(border_width);
         this.search_engine = new SearchEngine(Referee.WHITE_PLAYER, 3, this.referee, new SimpleValueModel());
