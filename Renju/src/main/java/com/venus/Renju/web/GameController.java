@@ -66,10 +66,11 @@ public class GameController {
             try {
                 //player 走棋完成，轮到ai走棋
                 Point ai_point = map.turn(request.getId(), false, request.getRow(), request.getCol());
-                LogCat.log(GameController.class, "aI turn, point="+ai_point+", session="+request.getId()+", user="+request.getName());
                 if (ai_point != null) {
+                    LogCat.log(GameController.class, "ai turn, point="+ai_point+", session="+request.getId()+", user="+request.getName());
                     return MessageBean.createBean(request.getId(), MessageBean.CODE_AI_DONE, request.getName(), ai_point.x, ai_point.y);
                 } else {
+                    LogCat.log(GameController.class, "useless request, session="+request.getId()+", user="+request.getName());
                     return MessageBean.createBean(request.getId(), MessageBean.CODE_ERROR, request.getName(), 0, 0);
                 }
             } catch (PlayMap.PlayerWinException exc) {
@@ -84,8 +85,8 @@ public class GameController {
                 //ai胜出
                 LogCat.log(GameController.class, "ai win, session="+request.getId()+", user="+request.getName());
                 //目前规则，玩家获胜的一分，失败不扣分
-//                 this.saveScore(request.getName(), -1);
-//                LogCat.log(GameController.class, "player "+request.getName()+" -1");
+                 this.saveScore(request.getName(), 0);
+                LogCat.log(GameController.class, "player "+request.getName()+" +0");
                 return MessageBean.createBean(request.getId(), MessageBean.CODE_AI_WIN, request.getName(), win_point.x, win_point.y);
             }
         } else {

@@ -24,6 +24,9 @@ public class SearchNode<T> {
     //current depth
     final private int depth;
     
+    //评估
+    public double evaluation;
+    
     /**
      * 
      * @param board

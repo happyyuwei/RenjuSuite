@@ -5,8 +5,8 @@
  */
 //
 //var url = "http://180.174.81.173:3389";
-//var url = "http://localhost:3389";
-var url = "";
+var url = "http://localhost:3389";
+//var url = "";
 var play_api = "/renju/play";
 var rank_api = "/renju/rank";
 
@@ -348,6 +348,9 @@ var Game = function (user_name) {
                     sendJson("POST", url + play_api, JSON.stringify(msg), function (response) {
                         //接收ai落子
                         var response_msg = JSON.parse(response);
+                        if(response_msg.code===-1){
+                            alert("游戏已结束，可能是你已经胜利或者失败，也有可能你长时间未走棋.");
+                        }
                         //判断玩家有没有赢
                         //code=15,玩家赢
                         if (response_msg.code === 15) {

@@ -165,6 +165,7 @@ public class AnalysisWindow extends Window {
             //initial player is black player
             this.board_panel.setPlayerId(Referee.BLACK_PLAYER);
              //search engine
+             //向下搜索一层
             this.search_engine = new SearchEngine(Referee.BLACK_PLAYER, 2, this.board_panel.referee, this.model);
             //show
             JOptionPane.showMessageDialog(null, "玩家先走", "走棋", JOptionPane.INFORMATION_MESSAGE);

@@ -12,7 +12,7 @@ package com.venus.Renju.core;
 public class SimpleValueModel implements ValueModel {
 
     //the value of s2,d2, s3, d3, s4,d4, and win, s is single, d is double
-    final private double[] value_list = {2, 4, 64, 256, 1024,4096 , 40960*2};
+    final private double[] value_list = {2, 4, 64, 256, 1024,4096*2 , ValueModel.WIN_VALUE};
 
     /**
      *

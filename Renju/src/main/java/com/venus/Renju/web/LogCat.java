@@ -11,7 +11,7 @@ package com.venus.Renju.web;
  */
 public class LogCat {
     
-    final static public String log_format="%s, from class=[%s], %s";
+    final static private String log_format="Logcat, %s, from class=[%s], %s";
     
     /**
      * log the format is data class and msg

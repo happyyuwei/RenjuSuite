@@ -15,6 +15,7 @@ import com.venus.Renju.core.*;
  */
 public class PlayMap {
 
+    //单例区域---------------------------------------------------------------------------
     //single instance
     final private static PlayMap play_map = new PlayMap();
 
@@ -26,11 +27,22 @@ public class PlayMap {
     public static PlayMap getInstance() {
         return play_map;
     }
-
+    //--------------------------------------------------------------------------------
+    /**
+     * 存储每个搜索引擎上一次调用时间，若时间超过一段时间无调用，则游戏结束 该搜索引擎实例将会被清除
+     *
+     * @since 2019.2.26
+     * @version 1.6
+     */
+    final private Map<Integer, Long> time_map;
     //map, the integer id is key
     final private Map<Integer, SearchEngine> map;
     //random instance
     final private Random random;
+    //搜索引擎守护线程
+    private EngineMonitor engine_monitor;
+    //monitor,每三分钟检查一次
+    final private int kill_time = 180000;
 
     /**
      * constructor.
@@ -40,6 +52,10 @@ public class PlayMap {
         this.map = Collections.synchronizedMap(new HashMap<>());
         //rand
         this.random = new Random();
+        //create time map
+        this.time_map = Collections.synchronizedMap(new HashMap<>());
+        //monitor
+        this.engine_monitor=new EngineMonitor();
     }
 
     /**
@@ -59,6 +75,16 @@ public class PlayMap {
         SearchEngine engine = new SearchEngine(ai_point, 2, referee, new SimpleValueModel());
         //register
         this.map.put(id, engine);
+        //reocrd time
+        this.time_map.put(id, System.currentTimeMillis());
+        //如果没有监控线程启动,则启动该线程
+        if (this.engine_monitor.is_start == false) {
+            //create a new thread
+            this.engine_monitor = new EngineMonitor();
+            //start
+            this.engine_monitor.start();
+        }
+        //return
         return id;
     }
 
@@ -80,33 +106,42 @@ public class PlayMap {
         if (engine == null) {
             return null;
         }
-        //get referee instance
-        Referee referee = engine.getReferee();
-        //如果第一轮ai先走，则玩家先不走
-        if (ai_only == false) {
-            //player turn
+        //加锁，确保操作原子性
+        synchronized (engine) {
+            //每次调用某个实例，更新调用时间
+            this.time_map.put(session_id, System.currentTimeMillis());
+            //get referee instance
+            Referee referee = engine.getReferee();
+            //如果第一轮ai先走，则玩家先不走
+            if (ai_only == false) {
+                //player turn
 //            int player_max_num = referee.turn(new Point(row, col), referee.getBlack_id());
-            int player_max_num = referee.turn(new Point(row, col), engine.getMine_id());
-            //judge win
-            if (player_max_num >= 5) {
-                //if the game is over, remove the session
-                this.map.remove(session_id);
-                LogCat.log(PlayMap.class, "session removed, id="+session_id);
-                //player win
-                throw new PlayerWinException();
+                int player_max_num = referee.turn(new Point(row, col), engine.getMine_id());
+                //judge win
+                if (player_max_num >= 5) {
+                    //if the game is over, remove the session
+                    this.map.remove(session_id);
+                    //remove timestamp
+                    this.time_map.remove(session_id);
+                    LogCat.log(PlayMap.class, "session removed, id=" + session_id);
+                    //player win
+                    throw new PlayerWinException();
+                }
             }
+            //ai turn
+            Point ai_next = engine.search();
+            //int ai_max_num = referee.turn(ai_next, referee.getWhite_id());
+            int ai_max_num = referee.turn(ai_next, engine.getOppoiste_id());
+            //judge win
+            if (ai_max_num >= 5) {
+                this.map.remove(session_id);
+                //remove timestamp
+                this.time_map.remove(session_id);
+                LogCat.log(PlayMap.class, "session removed, id=" + session_id);
+                throw new AiWinException(ai_next);
+            }
+            return ai_next;
         }
-        //ai turn
-        Point ai_next = engine.search();
-//        int ai_max_num = referee.turn(ai_next, referee.getWhite_id());
-        int ai_max_num = referee.turn(ai_next, engine.getOppoiste_id());
-        //judge win
-        if (ai_max_num >= 5) {
-            this.map.remove(session_id);
-             LogCat.log(PlayMap.class, "session removed, id="+session_id);
-            throw new AiWinException(ai_next);
-        }
-        return ai_next;
     }
 
     /**
@@ -140,6 +175,52 @@ public class PlayMap {
             return win_point;
         }
 
+    }
+
+    /**
+     * 搜索引擎监控进程，只要一段时间内没有调用引擎，将直接移除该实例.
+     */
+    public class EngineMonitor extends Thread {
+        
+        private boolean is_start=false;
+        
+        /**
+         * clean useless search engine.
+         */
+        public void clean() {
+            for (Map.Entry<Integer, Long> e : time_map.entrySet()) {
+                //get the period of the last time activation
+                //get engine
+                SearchEngine engine = map.get(e.getKey());
+                //加锁，确保删除时操作原子性
+                synchronized (engine) {
+                    long period = System.currentTimeMillis() - e.getValue();
+                    if (period > kill_time) {
+                        //remove
+                        map.remove(e.getKey());
+                        //clear timestamp
+                        time_map.remove(e.getKey());
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void run() {
+            LogCat.log(PlayMap.EngineMonitor.class, "start engine mointor thread");
+            while (time_map.isEmpty() == false) {
+                LogCat.log(PlayMap.EngineMonitor.class, "monitor, time_map=" + time_map);
+                clean();
+                //every 1/3 period time, monitor
+                try {
+                    Thread.sleep(kill_time / 3);
+                } catch (InterruptedException exc) {
+                    exc.printStackTrace();
+                }
+            }
+            this.is_start=false;
+            LogCat.log(PlayMap.EngineMonitor.class, "exit monitor thread, map=" + time_map);
+        }
     }
 
 }

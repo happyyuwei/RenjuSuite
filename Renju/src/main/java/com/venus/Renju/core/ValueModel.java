@@ -11,6 +11,8 @@ package com.venus.Renju.core;
  */
 public interface ValueModel {
     
+    final static public double WIN_VALUE=Double.MAX_VALUE/10;
+    
     /**
      * evaluate the borad value.
      * @param board
