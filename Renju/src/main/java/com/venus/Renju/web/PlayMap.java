@@ -55,16 +55,17 @@ public class PlayMap {
         //create time map
         this.time_map = Collections.synchronizedMap(new HashMap<>());
         //monitor
-        this.engine_monitor=new EngineMonitor();
+        this.engine_monitor = new EngineMonitor();
     }
 
     /**
      * create a game and add the instance to the list
      *
      * @param ai_point
+     * @param level
      * @return
      */
-    public int createGame(String ai_point) {
+    public int createGame(String ai_point, int level) {
         //create random id
         int id = this.random.nextInt();
         //create referee
@@ -72,7 +73,8 @@ public class PlayMap {
         //set backup
         referee.setBackup(true);
         //create engine
-        SearchEngine engine = new SearchEngine(ai_point, 2, referee, new SimpleValueModel());
+        SearchEngine engine = new SearchEngine(ai_point, level, referee, new SimpleValueModel());
+        LogCat.log(PlayMap.class, "create search engine, level=" + level);
         //register
         this.map.put(id, engine);
         //reocrd time
@@ -181,28 +183,40 @@ public class PlayMap {
      * 搜索引擎监控进程，只要一段时间内没有调用引擎，将直接移除该实例.
      */
     public class EngineMonitor extends Thread {
-        
-        private boolean is_start=false;
-        
+
+        private volatile boolean is_start = false;
+
         /**
          * clean useless search engine.
          */
         public void clean() {
+            List<Integer> remove_list = new ArrayList<>();
             for (Map.Entry<Integer, Long> e : time_map.entrySet()) {
                 //get the period of the last time activation
                 //get engine
-                SearchEngine engine = map.get(e.getKey());
-                //加锁，确保删除时操作原子性
-                synchronized (engine) {
-                    long period = System.currentTimeMillis() - e.getValue();
-                    if (period > kill_time) {
-                        //remove
-                        map.remove(e.getKey());
-                        //clear timestamp
-                        time_map.remove(e.getKey());
-                    }
+                long period = System.currentTimeMillis() - e.getValue();
+                if (period > kill_time) {
+                    //add to remove list,
+                    //先记下来，稍后统一删除，避免 CurrentModificationException
+                    remove_list.add(e.getKey());
                 }
             }
+            //remove
+            for (int i = 0; i < remove_list.size(); i++) {
+                //remove
+                map.remove(remove_list.get(i));
+//                        //clear timestamp
+                time_map.remove(remove_list.get(i));
+            }
+        }
+
+        /**
+         *
+         */
+        @Override
+        public synchronized void start() {
+            this.is_start = true;
+            super.start();
         }
 
         @Override
@@ -218,7 +232,7 @@ public class PlayMap {
                     exc.printStackTrace();
                 }
             }
-            this.is_start=false;
+            this.is_start = false;
             LogCat.log(PlayMap.EngineMonitor.class, "exit monitor thread, map=" + time_map);
         }
     }

@@ -27,7 +27,6 @@ public class SimpleSearchCore extends SearchCore{
     /**
      * constructor
      * @param me
-     * @param max_depth
      * @param referee
      * @param model 
      */

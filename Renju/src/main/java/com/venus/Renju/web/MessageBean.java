@@ -5,7 +5,6 @@
  */
 package com.venus.Renju.web;
 
-
 /**
  *
  * @author happy
@@ -16,11 +15,12 @@ public class MessageBean {
     //如果ai先，则同时返回第一步走棋棋盘
     //玩家走棋请求，code=8 ---> ai 走棋响应, code=9
     //如此往复，若玩家胜出，code=15, 若ai胜出, code=16
-    
+
     /**
      * error code
-     **/
-    final public static int CODE_ERROR=-1;
+     *
+     */
+    final public static int CODE_ERROR = -1;
     //start game code, request by player
     final public static int CODE_START_GAME = 1;
     //who first, response by server
@@ -45,11 +45,13 @@ public class MessageBean {
     private int code;
     //player name
     private String name;
+    //游戏难度@2019.2.27 目前支持1-5
+    private int level;
     //next row
     private int row;
     //next col
     private int col;
-    
+
     /**
      * @return the code
      */
@@ -119,29 +121,46 @@ public class MessageBean {
     public void setCol(int col) {
         this.col = col;
     }
-    
+
     /**
      * bean factory
+     *
      * @param session_id
      * @param code
      * @param name
+     * @param level
      * @param row
      * @param col
-     * @return 
+     * @return
      */
-    public static MessageBean createBean(int session_id, int code,String name, int row, int col){
-         MessageBean bean=new MessageBean();
-         bean.setCode(code);
-         bean.setId(session_id);
-         bean.setName(name);
-         bean.setRow(row);
-         bean.setCol(col);
-         return bean;
+    public static MessageBean createBean(int session_id, int code, String name, int level, int row, int col) {
+        MessageBean bean = new MessageBean();
+        bean.setCode(code);
+        bean.setId(session_id);
+        bean.setName(name);
+        bean.setLevel(level);
+        bean.setRow(row);
+        bean.setCol(col);
+        return bean;
     }
-    
+
     @Override
-    public String toString(){
-        return String.format("class{session_id=%d, code=%d, name=%s, row=%d, col=%d}", this.id,this.code,this.name, this.row, this.col);
+    public String toString() {
+        return String.format("class{session_id=%d, level=%d, code=%d, name=%s, row=%d, col=%d}", this.id, this.level, this.code, this.name, this.row, this.col);
     }
-    
+
+    /**
+     * @return the level
+     */
+    public int getLevel() {
+        return level;
+    }
+
+    /**
+     * @param level the level to set
+     */
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
 }

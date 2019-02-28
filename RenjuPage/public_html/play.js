@@ -88,12 +88,15 @@ function updateRank() {
 /**
  * 
  * @param {type} user_name
+ * @param {type} game_level
  * @returns {undefined}
  */
-var Game = function (user_name) {
+var Game = function (user_name, game_level) {
 
     //用户名
     var user = user_name;
+    //难度
+    var level=Number(game_level);
 
     /**
      * 初始化棋盘
@@ -222,6 +225,7 @@ var Game = function (user_name) {
             id: 0, //code=1时，id无效
             //code=1, 请求启动游戏
             code: 1,
+            level:level, //游戏难度目前支持1-5 @since 2019.2.27
             name: user,
             row: 0, //code=1时，row无效
             col: 0 //code=1时，col无效
@@ -334,13 +338,14 @@ var Game = function (user_name) {
                     paintChess(row, col, player);
                     board_enable[row][col] = false;
                     //通知面板
-                    info_panel.innerHTML = "AI走棋.";
+                    info_panel.innerHTML = "AI走棋，正在思考...";
                     //封装玩家落子
                     var msg = {
                         id: session_id,
                         //code=8，玩家走棋完成
                         code: 8,
                         name: user,
+                        level:level,
                         row: row,
                         col: col
                     };

@@ -5,8 +5,8 @@
  */
 //
 //var url = "http://180.174.81.173:3389";
-//var url = "http://localhost:3389";
-var url = "";
+var url = "http://localhost:3389";
+//var url = "";
 var play_api = "/renju/play";
 var rank_api = "/renju/rank";
 
@@ -88,12 +88,15 @@ function updateRank() {
 /**
  * 
  * @param {type} user_name
+ * @param {type} game_level
  * @returns {undefined}
  */
-var Game = function (user_name) {
+var Game = function (user_name, game_level) {
 
     //用户名
     var user = user_name;
+    //难度
+    var level=Number(game_level);
 
     /**
      * 初始化棋盘
@@ -222,6 +225,7 @@ var Game = function (user_name) {
             id: 0, //code=1时，id无效
             //code=1, 请求启动游戏
             code: 1,
+            level:level, //游戏难度目前支持1-5 @since 2019.2.27
             name: user,
             row: 0, //code=1时，row无效
             col: 0 //code=1时，col无效
@@ -341,6 +345,7 @@ var Game = function (user_name) {
                         //code=8，玩家走棋完成
                         code: 8,
                         name: user,
+                        level:level,
                         row: row,
                         col: col
                     };
@@ -348,6 +353,9 @@ var Game = function (user_name) {
                     sendJson("POST", url + play_api, JSON.stringify(msg), function (response) {
                         //接收ai落子
                         var response_msg = JSON.parse(response);
+                        if(response_msg.code===-1){
+                            alert("游戏已结束，可能是你已经胜利或者失败，也有可能你长时间未走棋.");
+                        }
                         //判断玩家有没有赢
                         //code=15,玩家赢
                         if (response_msg.code === 15) {

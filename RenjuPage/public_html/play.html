@@ -12,7 +12,10 @@ and open the template in the editor.
         <link rel="stylesheet" href="./pack/standstone.bootstrap.min.css">
         <script src="./pack/jquery.min.js"></script>
         <script src="./pack/bootstrap.min.js"></script>
+        <!--棋盘逻辑-->
         <script type="text/javascript" src="play.js"></script>
+        <!--导航栏-->
+        <script type="text/javascript" src="nav.js"></script>
         <style>
             /*棋盘样式*/
             canvas {
@@ -23,6 +26,10 @@ and open the template in the editor.
         </style>
     </head>
     <body>
+        <!--导航栏-->
+        <script>
+            var nav = new Nav();
+        </script>
         <div class="container-fluid">
             <div class="row" >
                 <div class="col-md-3">
@@ -48,7 +55,8 @@ and open the template in the editor.
                                 <!--the context below will be come auto-->
                                 <tbody id="user-rank"></tbody>
                             </table>
-                            <Button class="btn btn-danger" onclick="window.location.href = 'play.html'">再来一局</Button>
+                            <Button class="btn btn-success" onclick="var url=window.location.href;window.location.href=url">再来一局</Button>
+                            <Button class="btn btn-danger" onclick="window.location.href = 'level.html'">返回菜单</Button>
                         </div>
                     </div>
                     <!--棋盘-->
@@ -57,23 +65,36 @@ and open the template in the editor.
                     </div>
                 </div>
                 <div class="col-md-3">
-                   <!--empty-->
+                    <!--empty-->
                 </div>
             </div>
         </div>
         <script>
             //完成渲染立即执行
             (function () {
-                //获取用户名
+//                //获取用户名
+                //检查用户转移至nav类
                 var user = window.localStorage.getItem("renju-game-user");
-                //如果用户名存在，则进入游戏，否则返回设置用户名
-                if (user !== null) {
-                    //创建实例
-                    var game_instance = new Game(user);
-                } else {
-                    //返回主界面设置用户名
-//                    window.location.href = "index.html";
+                //获取难度
+                var param = window.location.href.split("?");
+                if (param.length === 2) {
+                    param = param[1].split("=");
+                    if (param.length > 1) {
+                        param = param[1];
+                        //如果用户名存在，则进入游戏，否则返回设置用户名
+                        if (user !== null) {
+                            //创建实例
+                            var game_instance = new Game(user, param);
+                        }
+                    }else{
+                        window.location.href="level.html";
+                    }
+                }else{
+                    window.location.href="level.html";
                 }
+
+
+
             })();
         </script>
     </body>

@@ -56,6 +56,7 @@ public class Referee {
         this.white_id = white_id;
         this.black_id = black_id;
     }
+    
 
     /**
      * 走棋，返回棋盘上最大连接数量，如果等于五则胜利，如果等于-1，非法走棋。
@@ -197,6 +198,38 @@ public class Referee {
         byte[][] next = Referee.copyMatrix(board);
         next[point.x][point.y] = player_id;
         return next;
+    }
+    
+    /**
+     * 判断棋盘是否为空
+     * @param board
+     * @return 
+     */
+    public static boolean isBoardEmpty(byte[][] board){
+        for(int i=0;i<board.length;i++){
+            for(int j=0;j<board[0].length;j++){
+                if(board[i][j]!=0){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * 判断棋盘是否已满
+     * @param board
+     * @return 
+     */
+    public static boolean isBoardFull(byte[][] board){
+        for(int i=0;i<board.length;i++){
+            for(int j=0;j<board[0].length;j++){
+                if(board[i][j]==0){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**

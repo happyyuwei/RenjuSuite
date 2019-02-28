@@ -36,6 +36,7 @@ public class AnalysisWindow extends Window {
     final private String freq_format = "%s:\n单边活2：%d, 双边活2：%d\n单边活3：%d, 双边活3：%d\n单边活4：%d, 双边活4：%d\n五连：%d\n";
 
     //AI模式 实例区域
+    private int level=SearchEngine.LEVEL_DIFFICULT_2;
     //search engine
     private SearchEngine search_engine;
     //value model
@@ -166,7 +167,7 @@ public class AnalysisWindow extends Window {
             this.board_panel.setPlayerId(Referee.BLACK_PLAYER);
              //search engine
              //向下搜索一层
-            this.search_engine = new SearchEngine(Referee.BLACK_PLAYER, 2, this.board_panel.referee, this.model);
+            this.search_engine = new SearchEngine(Referee.BLACK_PLAYER, this.level, this.board_panel.referee, this.model);
             //show
             JOptionPane.showMessageDialog(null, "玩家先走", "走棋", JOptionPane.INFORMATION_MESSAGE);
         } else {
@@ -177,7 +178,7 @@ public class AnalysisWindow extends Window {
             //initial player is black player
             this.board_panel.setPlayerId(Referee.WHITE_PLAYER);
              //search engine
-            this.search_engine = new SearchEngine(Referee.WHITE_PLAYER, 2, this.board_panel.referee, this.model);
+            this.search_engine = new SearchEngine(Referee.WHITE_PLAYER, this.level, this.board_panel.referee, this.model);
             //show
             JOptionPane.showMessageDialog(null, "AI先走", "走棋", JOptionPane.INFORMATION_MESSAGE);
         }
