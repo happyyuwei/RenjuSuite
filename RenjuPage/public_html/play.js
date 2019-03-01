@@ -5,8 +5,8 @@
  */
 //
 //var url = "http://180.174.81.173:3389";
-var url = "http://localhost:3389";
-//var url = "";
+//var url = "http://localhost:3389";
+var url = "";
 var play_api = "/renju/play";
 var rank_api = "/renju/rank";
 
@@ -360,6 +360,7 @@ var Game = function (user_name, game_level) {
                         //code=15,玩家赢
                         if (response_msg.code === 15) {
                             alert("你赢了");
+                            info_panel.innerHTML = "游戏结束，你赢了";
                             //更新排名
                             updateRank();
                             //set visible
@@ -381,6 +382,7 @@ var Game = function (user_name, game_level) {
                         //code=16,AI赢
                         if (response_msg.code === 16) {
                             alert("你输了");
+                            info_panel.innerHTML = "游戏结束，你输了";
                             updateRank();
                              //set visible
                             var rank_panel = document.getElementById("rank-panel");

@@ -19,25 +19,26 @@ public class MaxMinSearchCore extends SearchCore {
 
     /**
      * constructor
+     *
      * @param me
      * @param max_depth
      * @param referee
-     * @param model 
+     * @param model
      */
     public MaxMinSearchCore(String me, int max_depth, Referee referee, ValueModel model) {
         super(me, max_depth, referee, model);
     }
-    
+
     /**
      *
      * @return
      */
     @Override
     public Point search() {
-        
+
         //第一次走棋走最中间
-        if(Referee.isBoardEmpty(super.getReferee().getBoard())==true){
-            return new Point(7,7);
+        if (Referee.isBoardEmpty(super.getReferee().getBoard()) == true) {
+            return new Point(7, 7);
         }
         //不是先手走棋，则进行搜索
         //get board
@@ -64,19 +65,29 @@ public class MaxMinSearchCore extends SearchCore {
      */
     public SearchNode search(SearchNode node, int depth, boolean me) {
 
-        //如果还没到根节点，但是已经赢了，则直接返回
-        double value = super.getValue_model().evaluate((byte[][]) node.getValue(), this.getMine_id(), this.getOppoiste_id());
-        if (value == ValueModel.WIN_VALUE) {
-            node.evaluation = value;
-            return node;
-        }
+        if (me == true) {
+            //如果还没到根节点，但是已经赢了，则直接返回
+            int max_sub = Referee.maxSub((byte[][])node.getValue(), super.getMine_id());
 
+            if (max_sub >=5) {
+                node.evaluation = ValueModel.WIN_VALUE;
+                return node;
+            }
+        }else{
+            //如果还没到根节点，但是已经赢了，则直接返回
+            int max_sub = Referee.maxSub((byte[][])node.getValue(), super.getOppoiste_id());
+
+            if (max_sub >=5) {
+                node.evaluation = -ValueModel.WIN_VALUE;
+                return node;
+            }
+        }
         //根节点，进行评估
         if (depth <= 0) {
 //             //evaluate
 //            double value = this.value_model.evaluate((byte[][]) node.getValue(), this.getMine_id(), this.getOppoiste_id());
             //save in the node
-            node.evaluation = value;
+            node.evaluation = super.getValue_model().evaluate((byte[][]) node.getValue(), this.getMine_id(), this.getOppoiste_id());;
             return node;
         }
         //获取接下来可能走法

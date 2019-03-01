@@ -111,14 +111,14 @@ public class GameController {
      * @param score
      */
     private void saveScore(String user, int score) {
-        Map<String, String> map = StreamLoader.readMap(".\\data\\rank.txt", ",");
+        Map<String, String> map = StreamLoader.readMap("../data/rank.txt", ",");
         String score_sum = map.get(user);
         if (score_sum == null) {
             map.put(user, String.valueOf(score));
         } else {
             map.replace(user, score_sum, String.valueOf(Integer.parseInt(score_sum) + score));
         }
-        StreamLoader.writeMap(map, ",", ".\\data\\rank.txt");
+        StreamLoader.writeMap(map, ",", "../data/rank.txt");
     }
 
 }

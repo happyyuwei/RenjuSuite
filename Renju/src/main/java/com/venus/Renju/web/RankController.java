@@ -33,7 +33,7 @@ public class RankController {
         //log
         LogCat.log(RankController.class, "request rank list.");
         //read rank file
-        Map<String,String> map=StreamLoader.readMap(".\\data\\rank.txt", ",");
+        Map<String,String> map=StreamLoader.readMap("../data/rank.txt", ",");
         //create list
         List<RankController.UserScore> rank_list=new ArrayList<>();
         //to a list
