@@ -5,8 +5,8 @@
  */
 //
 //var url = "http://180.174.81.173:3389";
-//var url = "http://localhost:3389";
-var url = "";
+var url = "http://localhost:3389";
+//var url = "";
 var play_api = "/renju/play";
 var rank_api = "/renju/rank";
 

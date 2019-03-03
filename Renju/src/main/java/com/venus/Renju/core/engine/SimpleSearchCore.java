@@ -92,5 +92,15 @@ public class SimpleSearchCore extends SearchCore{
             }
         }
     }
+    
+    @Override
+    public byte getMine_id(){
+        return super.getOppoiste_id();
+    }
+
+    @Override
+    public byte getOppoiste_id(){
+        return super.getMine_id();
+    }
 
 }

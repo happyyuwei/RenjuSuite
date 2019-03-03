@@ -36,7 +36,7 @@ public class AnalysisWindow extends Window {
     final private String freq_format = "%s:\n单边活2：%d, 双边活2：%d\n单边活3：%d, 双边活3：%d\n单边活4：%d, 双边活4：%d\n五连：%d\n";
 
     //AI模式 实例区域
-    private int level=SearchEngine.LEVEL_DIFFICULT_2;
+    private int level = SearchEngine.LEVEL_MIDDLE;
     //search engine
     private SearchEngine search_engine;
     //value model
@@ -83,19 +83,15 @@ public class AnalysisWindow extends Window {
                 this.board_panel.setPlayerId(String.valueOf(e.getItem()));
             }
         });
-        //add analys listener
-        this.analys_button.addActionListener((ActionEvent e) -> {
-            //analys
-            this.analys();
-        });
+
         //窗口关闭事件
-        super.addWindowListener(new WindowAdapter(){
+        super.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosed(WindowEvent e){
+            public void windowClosed(WindowEvent e) {
                 //close window
                 AnalysisWindow.super.dispose();
                 //开启菜单窗口
-                MenuWindow menu_window=new MenuWindow();
+                MenuWindow menu_window = new MenuWindow();
             }
         });
 
@@ -117,14 +113,23 @@ public class AnalysisWindow extends Window {
             this.startGame();
         } else if (this.mode.equals(AnalysisWindow.MODE_FREE)) {
             //initial player is black player
+            this.model = new SimpleValueModel();
             this.board_panel.setPlayerId(Referee.BLACK_PLAYER);
+            this.freeModeAnalys();
         }
     }
 
     /**
      *
      */
-    public void analys() {
+    public void freeModeAnalys() {
+        //add analys listener
+        this.analys_button.addActionListener((ActionEvent e) -> {
+
+            //analys
+            this.analys_area.setText(String.format("第%d轮\n\n", this.round) + "玩家已走棋...\n\n");
+            analys_frequency();
+        });
 
     }
 
@@ -142,6 +147,9 @@ public class AnalysisWindow extends Window {
         this.analys_area.append("\n\n");
         //white
         this.analys_area.append(String.format(this.freq_format, "白棋：", white_freq[0], white_freq[1], white_freq[2], white_freq[3], white_freq[4], white_freq[5], white_freq[6]));
+        this.analys_area.append("\n\n");
+        this.analys_area.append("白棋：" + String.valueOf(model.evaluate_oneside(this.board_panel.referee.getBoard(), this.board_panel.referee.getWhite_id())));
+        this.analys_area.append("黑棋：" + String.valueOf(model.evaluate_oneside(this.board_panel.referee.getBoard(), this.board_panel.referee.getBlack_id())));
     }
 
     /**
@@ -165,9 +173,10 @@ public class AnalysisWindow extends Window {
             this.ai_id = this.board_panel.referee.getWhite_id();
             //initial player is black player
             this.board_panel.setPlayerId(Referee.BLACK_PLAYER);
-             //search engine
-             //向下搜索一层
+            //search engine
+            //向下搜索一层
             this.search_engine = new SearchEngine(Referee.BLACK_PLAYER, this.level, this.board_panel.referee, this.model);
+//this.search_engine = new SearchEngine(Referee.WHITE_PLAYER, this.level, this.board_panel.referee, this.model);
             //show
             JOptionPane.showMessageDialog(null, "玩家先走", "走棋", JOptionPane.INFORMATION_MESSAGE);
         } else {
@@ -177,7 +186,7 @@ public class AnalysisWindow extends Window {
             this.ai_id = this.board_panel.referee.getBlack_id();
             //initial player is black player
             this.board_panel.setPlayerId(Referee.WHITE_PLAYER);
-             //search engine
+            //search engine
             this.search_engine = new SearchEngine(Referee.WHITE_PLAYER, this.level, this.board_panel.referee, this.model);
             //show
             JOptionPane.showMessageDialog(null, "AI先走", "走棋", JOptionPane.INFORMATION_MESSAGE);

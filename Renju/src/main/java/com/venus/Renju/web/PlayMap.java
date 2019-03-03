@@ -118,7 +118,7 @@ public class PlayMap {
             if (ai_only == false) {
                 //player turn
 //            int player_max_num = referee.turn(new Point(row, col), referee.getBlack_id());
-                int player_max_num = referee.turn(new Point(row, col), engine.getMine_id());
+                int player_max_num = referee.turn(new Point(row, col), engine.getOppoiste_id());
                 //judge win
                 if (player_max_num >= 5) {
                     //if the game is over, remove the session
@@ -133,7 +133,7 @@ public class PlayMap {
             //ai turn
             Point ai_next = engine.search();
             //int ai_max_num = referee.turn(ai_next, referee.getWhite_id());
-            int ai_max_num = referee.turn(ai_next, engine.getOppoiste_id());
+            int ai_max_num = referee.turn(ai_next, engine.getMine_id());
             //judge win
             if (ai_max_num >= 5) {
                 this.map.remove(session_id);

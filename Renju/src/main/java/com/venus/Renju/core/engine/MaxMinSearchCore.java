@@ -35,6 +35,7 @@ public class MaxMinSearchCore extends SearchCore {
      */
     @Override
     public Point search() {
+//        i=0;
 
         //第一次走棋走最中间
         if (Referee.isBoardEmpty(super.getReferee().getBoard()) == true) {
@@ -63,33 +64,16 @@ public class MaxMinSearchCore extends SearchCore {
      * @param me
      * @return
      */
+    int i = 0;
+
     public SearchNode search(SearchNode node, int depth, boolean me) {
-
-        if (me == true) {
-            //如果还没到根节点，但是已经赢了，则直接返回
-            int max_sub = Referee.maxSub((byte[][])node.getValue(), super.getMine_id());
-
-            if (max_sub >=5) {
-                node.evaluation = ValueModel.WIN_VALUE;
-                return node;
-            }
-        }else{
-            //如果还没到根节点，但是已经赢了，则直接返回
-            int max_sub = Referee.maxSub((byte[][])node.getValue(), super.getOppoiste_id());
-
-            if (max_sub >=5) {
-                node.evaluation = -ValueModel.WIN_VALUE;
-                return node;
-            }
-        }
         //根节点，进行评估
         if (depth <= 0) {
-//             //evaluate
-//            double value = this.value_model.evaluate((byte[][]) node.getValue(), this.getMine_id(), this.getOppoiste_id());
             //save in the node
-            node.evaluation = super.getValue_model().evaluate((byte[][]) node.getValue(), this.getMine_id(), this.getOppoiste_id());;
+            node.evaluation = super.getValue_model().evaluate((byte[][]) node.getValue(), this.getMine_id(), this.getOppoiste_id());
             return node;
         }
+
         //获取接下来可能走法
         //who turns
         byte player_id = me ? this.getMine_id() : this.getOppoiste_id();
@@ -108,6 +92,12 @@ public class MaxMinSearchCore extends SearchCore {
                 byte[][] next_state = Referee.turn((byte[][]) node.getValue(), point_array[i], player_id);
 //                //create next node and search next
                 SearchNode next_node = new SearchNode(next_state, point_array[i], node.getDepth() + 1, node);
+                int max_sub = Referee.maxSub((byte[][]) next_node.getValue(), super.getMine_id());
+                //如果发现该节点已经获胜，不必继续搜索
+                if (max_sub >= 5) {
+                    next_node.evaluation = super.getValue_model().evaluate((byte[][]) next_node.getValue(), this.getMine_id(), this.getOppoiste_id());
+                    return next_node;
+                }
                 SearchNode current_max_node = this.search(next_node, depth - 1, !me);
                 //compare
                 if (current_max_node.evaluation > max_value) {
@@ -126,6 +116,13 @@ public class MaxMinSearchCore extends SearchCore {
                 byte[][] next_state = Referee.turn((byte[][]) node.getValue(), point_array[i], player_id);
 //                //create next node and search next
                 SearchNode next_node = new SearchNode(next_state, point_array[i], node.getDepth() + 1, node);
+                //如果还没到根节点，但是对面已经赢了，则直接返回
+                int max_sub = Referee.maxSub((byte[][]) next_node.getValue(), super.getOppoiste_id());
+
+                if (max_sub >= 5) {
+                    next_node.evaluation = super.getValue_model().evaluate((byte[][]) next_node.getValue(), this.getMine_id(), this.getOppoiste_id());;
+                    return next_node;
+                }
                 SearchNode current_min_node = this.search(next_node, depth - 1, !me);
                 //compare
                 if (current_min_node.evaluation < min_value) {

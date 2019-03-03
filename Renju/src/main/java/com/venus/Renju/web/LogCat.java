@@ -20,7 +20,7 @@ public class LogCat {
      */
     public static void log(Class c, String msg){
         //log
-        System.out.println(String.format(log_format, new java.util.Date(),c.getName(), msg));
+//        System.out.println(String.format(log_format, new java.util.Date(),c.getName(), msg));
     }
     
 }

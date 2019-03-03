@@ -49,10 +49,12 @@ public class MenuWindow extends Window{
         this.free_player_button.addActionListener((ActionEvent e) -> {
             AnalysisWindow window=new AnalysisWindow(AnalysisWindow.MODE_FREE);
             this.dispose();
+            window.init();
         });
         this.video_button.addActionListener((ActionEvent e) -> {
             AnalysisWindow window=new AnalysisWindow(AnalysisWindow.MODE_VIDEO);
             this.dispose();
+            
         });
     }
     

@@ -114,7 +114,7 @@ public class SimpleValueModel implements ValueModel {
                         if (free_side > 0 && sub_len < 5) {
                             int index = (sub_len - 2) * 2 + (free_side - 1);
                             freq_array[index] = freq_array[index] + 1;
-                        } else if (free_side > 0 && sub_len >= 5) {
+                        } else if (sub_len >= 5) {
                             freq_array[freq_array.length - 1] = freq_array[freq_array.length - 1] + 1;
                         }
                     }
